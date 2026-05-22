@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MenuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        return match($role) {
+            'owner' => redirect()->route('owner.dashboard'),
+            'kasir' => redirect()->route('kasir.dashboard'),
+            'chef'  => redirect()->route('chef.dashboard'),
+            default => redirect('/'),
+        };
+    }
+    return redirect()->to('/login');
 });
 
 Route::get('/dashboard', function () {
@@ -33,7 +43,14 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::get('/dashboard', function () {
         return view('owner.dashboard');
     })->name('dashboard');
+
+    // Menu routes
+    Route::resource('menu', MenuController::class);
 });
+
+
+
+//----------------------------------------------------------------------------------------------
 
 // Kasir routes
 Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->group(function () {
@@ -42,6 +59,8 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     })->name('dashboard');
 });
 
+//----------------------------------------------------------------------------------------------
+
 // Chef routes
 Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(function () {
     Route::get('/dashboard', function () {
@@ -49,4 +68,6 @@ Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(f
     })->name('dashboard');
 });
 
-require __DIR__.'/auth.php';
+//----------------------------------------------------------------------------------------------
+
+require __DIR__ . '/auth.php';

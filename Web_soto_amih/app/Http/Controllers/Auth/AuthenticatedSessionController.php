@@ -30,6 +30,17 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $role = auth()->user()->role;
+        $name = auth()->user()->name;
+
+        // Simpan pesan sukses ke session
+        $roleLabel = match ($role) {
+            'owner' => 'Pemilik',
+            'kasir' => 'Kasir',
+            'chef' => 'Chef',
+            default => $role,
+        };
+
+        session()->flash('login_success', "Selamat datang, $name! Anda berhasil masuk sebagai $roleLabel.");
 
         return match ($role) {
             'owner' => redirect()->route('owner.dashboard'),
