@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\BahanJadiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +19,10 @@ use App\Http\Controllers\MenuController;
 Route::get('/', function () {
     if (auth()->check()) {
         $role = auth()->user()->role;
-        return match($role) {
+        return match ($role) {
             'owner' => redirect()->route('owner.dashboard'),
             'kasir' => redirect()->route('kasir.dashboard'),
-            'chef'  => redirect()->route('chef.dashboard'),
+            'chef' => redirect()->route('chef.dashboard'),
             default => redirect('/'),
         };
     }
@@ -46,6 +47,10 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
 
     // Menu routes
     Route::resource('menu', MenuController::class);
+
+    // Bahan Jadi routes
+    Route::resource('bahan_jadi', BahanJadiController::class);
+    Route::patch('/bahan_jadi/{bahanJadi}/update-stok', [BahanJadiController::class, 'updateStok'])->name('bahan_jadi.update_stok');
 });
 
 
