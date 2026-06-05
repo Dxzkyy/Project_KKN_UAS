@@ -62,6 +62,16 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/dashboard', function () {
         return view('kasir.dashboard');
     })->name('dashboard');
+
+    // Ubah di sini: Langsung redirect ke halaman pesanan
+    Route::get('/dashboard', function () {
+        return redirect()->route('kasir.pesanan.index');
+    })->name('dashboard');
+
+    // Route untuk fitur Proses Pesanan yang tadi kita buat
+    Route::get('/pesanan', function () {
+        return view('kasir.pesanan.index');
+    })->name('pesanan.index');
 });
 
 //----------------------------------------------------------------------------------------------
