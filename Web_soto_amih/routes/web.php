@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\BahanJadiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +19,10 @@ use App\Http\Controllers\MenuController;
 Route::get('/', function () {
     if (auth()->check()) {
         $role = auth()->user()->role;
-        return match($role) {
+        return match ($role) {
             'owner' => redirect()->route('owner.dashboard'),
             'kasir' => redirect()->route('kasir.dashboard'),
-            'chef'  => redirect()->route('chef.dashboard'),
+            'chef' => redirect()->route('chef.dashboard'),
             default => redirect('/'),
         };
     }
@@ -46,6 +47,10 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
 
     // Menu routes
     Route::resource('menu', MenuController::class);
+
+    // Bahan Jadi routes
+    Route::resource('bahan_jadi', BahanJadiController::class);
+    Route::patch('/bahan_jadi/{bahanJadi}/update-stok', [BahanJadiController::class, 'updateStok'])->name('bahan_jadi.update_stok');
 });
 
 
@@ -57,6 +62,16 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/dashboard', function () {
         return view('kasir.dashboard');
     })->name('dashboard');
+
+    // Ubah di sini: Langsung redirect ke halaman pesanan
+    Route::get('/dashboard', function () {
+        return redirect()->route('kasir.pesanan.index');
+    })->name('dashboard');
+
+    // Route untuk fitur Proses Pesanan yang tadi kita buat
+    Route::get('/pesanan', function () {
+        return view('kasir.pesanan.index');
+    })->name('pesanan.index');
 });
 
 //----------------------------------------------------------------------------------------------
