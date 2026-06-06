@@ -88,15 +88,15 @@
         </button>
         <button onclick="filterKategori('Makanan')"
             class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium transition" data-kategori="Makanan">
-            🍜 Makanan
+            Makanan
         </button>
         <button onclick="filterKategori('Minuman')"
             class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium transition" data-kategori="Minuman">
-            🥤 Minuman
+            Minuman
         </button>
         <button onclick="filterKategori('Lainnya')"
             class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium transition" data-kategori="Lainnya">
-            🍘 Lainnya
+            Lainnya
         </button>
     </div>
 

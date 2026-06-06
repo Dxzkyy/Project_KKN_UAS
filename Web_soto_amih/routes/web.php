@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\BahanJadiController;
+use App\Http\Controllers\Kasir\PesananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,15 +64,12 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
         return view('kasir.dashboard');
     })->name('dashboard');
 
-    // Ubah di sini: Langsung redirect ke halaman pesanan
     Route::get('/dashboard', function () {
         return redirect()->route('kasir.pesanan.index');
     })->name('dashboard');
 
-    // Route untuk fitur Proses Pesanan yang tadi kita buat
-    Route::get('/pesanan', function () {
-        return view('kasir.pesanan.index');
-    })->name('pesanan.index');
+    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
+    Route::post('/pesanan/store', [PesananController::class, 'store'])->name('pesanan.store');
 });
 
 //----------------------------------------------------------------------------------------------
