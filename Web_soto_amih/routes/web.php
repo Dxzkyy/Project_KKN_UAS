@@ -5,25 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\BahanJadiController;
 use App\Http\Controllers\Kasir\PesananController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\ChefController;
 
 Route::get('/', function () {
     if (auth()->check()) {
         $role = auth()->user()->role;
         return match ($role) {
             'owner' => redirect()->route('owner.dashboard'),
-            'kasir' => redirect()->route('kasir.dashboard'),
-            'chef' => redirect()->route('chef.dashboard'),
+            'kasir' => redirect()->route('kasir.pesanan.index'),
+            'chef'  => redirect()->route('chef.pesanan.index'),
             default => redirect('/'),
         };
     }
@@ -31,8 +21,17 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        return match ($role) {
+            'owner' => redirect()->route('owner.dashboard'),
+            'kasir' => redirect()->route('kasir.pesanan.index'),
+            'chef'  => redirect()->route('chef.pesanan.index'),
+            default => redirect('/login'),
+        };
+    }
+    return redirect()->to('/login');
+})->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -46,23 +45,15 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
         return view('owner.dashboard');
     })->name('dashboard');
 
-    // Menu routes
     Route::resource('menu', MenuController::class);
-
-    // Bahan Jadi routes
     Route::resource('bahan_jadi', BahanJadiController::class);
     Route::patch('/bahan_jadi/{bahanJadi}/update-stok', [BahanJadiController::class, 'updateStok'])->name('bahan_jadi.update_stok');
 });
-
-
 
 //----------------------------------------------------------------------------------------------
 
 // Kasir routes
 Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('kasir.dashboard');
-    })->name('dashboard');
 
     Route::get('/dashboard', function () {
         return redirect()->route('kasir.pesanan.index');
@@ -73,15 +64,22 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
 
     Route::get('/pesanan/riwayat', [PesananController::class, 'riwayat'])->name('pesanan.riwayat');
     Route::get('/pesanan/struk/{id}', [PesananController::class, 'cetakStruk'])->name('pesanan.struk');
+
+    // Route batalkan pesanan (hanya pending)
+    Route::patch('/pesanan/{id}/cancel', [PesananController::class, 'cancel'])->name('pesanan.cancel');
 });
 
 //----------------------------------------------------------------------------------------------
 
 // Chef routes
 Route::middleware(['auth', 'role:chef'])->prefix('chef')->name('chef.')->group(function () {
+
     Route::get('/dashboard', function () {
-        return view('chef.dashboard');
+        return redirect()->route('chef.pesanan.index');
     })->name('dashboard');
+
+    Route::get('/pesanan', [ChefController::class, 'index'])->name('pesanan.index');
+    Route::post('/pesanan/update-status/{id}', [ChefController::class, 'updateStatus'])->name('pesanan.update_status');
 });
 
 //----------------------------------------------------------------------------------------------
