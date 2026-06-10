@@ -70,6 +70,9 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
 
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
     Route::post('/pesanan/store', [PesananController::class, 'store'])->name('pesanan.store');
+
+    Route::get('/pesanan/riwayat', [PesananController::class, 'riwayat'])->name('pesanan.riwayat');
+    Route::get('/pesanan/struk/{id}', [PesananController::class, 'cetakStruk'])->name('pesanan.struk');
 });
 
 //----------------------------------------------------------------------------------------------
