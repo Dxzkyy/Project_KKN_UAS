@@ -98,4 +98,22 @@ class PesananController extends Controller
             ], 500);
         }
     }
+
+    // Method untuk menampilkan halaman riwayat pesanan
+    public function riwayat()
+    {
+        // Ambil semua data pesanan dari yang paling baru, beserta detail item dan menunya
+        $orders = Order::with('orderItems.menu')->latest()->get();
+        
+        return view('kasir.pesanan.riwayat', compact('orders'));
+    }
+
+    // Method untuk menampilkan tampilan cetak struk
+    public function cetakStruk($id)
+    {
+        // Cari data pesanan berdasarkan ID
+        $order = Order::with('orderItems.menu')->findOrFail($id);
+        
+        return view('kasir.pesanan.struk', compact('order'));
+    }
 }
