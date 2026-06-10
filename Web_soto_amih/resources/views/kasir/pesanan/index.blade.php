@@ -45,28 +45,22 @@
                 </div>
                 <div class="flex gap-2">
                     <button class="px-4 py-1.5 bg-[#C97B2E] text-white text-sm font-medium rounded-lg">Semua produk</button>
-                    <button
-                        class="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium rounded-lg transition">Makanan</button>
-                    <button
-                        class="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium rounded-lg transition">Minuman</button>
+                    <button class="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium rounded-lg transition">Makanan</button>
+                    <button class="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium rounded-lg transition">Minuman</button>
                 </div>
             </div>
 
             {{-- Grid Menu --}}
             <div class="grid grid-cols-3 gap-4 overflow-y-auto" style="max-height: calc(100vh - 280px);">
-
                 @foreach ($menus as $item)
                     <div class="bg-white rounded-2xl p-3 shadow-sm hover:shadow-md transition cursor-pointer group">
                         <div class="relative h-32 mb-3 rounded-xl overflow-hidden">
-                            {{-- Foto disesuaikan dengan folder menus/ dan kolom foto --}}
                             <img src="{{ asset('storage/menus/' . $item->foto) }}" alt="{{ $item->nama_produk }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            <span
-                                class="absolute top-2 right-2 bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-md">{{ $item->kategori }}</span>
+                            <span class="absolute top-2 right-2 bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-md">{{ $item->kategori }}</span>
                         </div>
                         <div class="flex justify-between items-start">
                             <div>
-                                {{-- Nama, Kode, Harga, dan Stok disesuaikan dengan kolom asli --}}
                                 <h3 class="font-semibold text-gray-800 text-sm">{{ $item->nama_produk }}</h3>
                                 <p class="text-xs text-gray-400 mb-1">{{ $item->kode_produk }}</p>
                                 <p class="font-bold text-[#C97B2E]">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
@@ -82,7 +76,6 @@
                         </div>
                     </div>
                 @endforeach
-
             </div>
         </div>
 
@@ -113,7 +106,7 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-500 w-24">Diskon (F7)</span>
+                    <span class="text-sm text-gray-500 w-24">Diskon</span>
                     <select id="tipeDiskon"
                         class="border border-gray-200 rounded-lg text-sm p-1.5 focus:ring-[#C97B2E] outline-none">
                         <option value="persen">%</option>
@@ -131,33 +124,25 @@
                 <div>
                     <p class="text-xs text-gray-500 mb-2">Metode pembayaran:</p>
                     <div class="grid grid-cols-3 gap-2">
-                        <button
-                            class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">Tunai</button>
-                        <button
-                            class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">QRIS</button>
-                        <button
-                            class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">Bank</button>
+                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">Tunai</button>
+                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">QRIS</button>
+                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">Bank</button>
                     </div>
                 </div>
 
                 <div>
                     <p class="text-xs text-gray-500 mb-2">Pilihan:</p>
                     <div class="grid grid-cols-2 gap-2">
-                        <button
-                            class="border border-[#C97B2E] bg-orange-50 rounded-lg py-2 text-xs font-bold text-[#C97B2E] flex justify-center items-center gap-1">Dine
-                            in</button>
-                        <button
-                            class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] transition flex justify-center items-center gap-1">Takeaway</button>
+                        <button class="border border-[#C97B2E] bg-orange-50 rounded-lg py-2 text-xs font-bold text-[#C97B2E] flex justify-center items-center gap-1">Dine in</button>
+                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] transition flex justify-center items-center gap-1">Takeaway</button>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2 mt-2">
-                    {{-- Tombol sudah dipasang ID btnBayar --}}
                     <button id="btnBayar"
                         class="w-full bg-[#C97B2E] hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-md transition flex justify-center items-center gap-2">
-                        Bayar (F9)
+                        Bayar
                     </button>
-                    {{-- Tombol sudah dipasang ID btnHapusKeranjang --}}
                     <button id="btnHapusKeranjang"
                         class="w-full border border-gray-200 hover:bg-red-50 text-red-500 font-semibold py-2.5 rounded-xl transition flex justify-center items-center gap-2 text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,16 +159,17 @@
 @endsection
 
 @push('scripts')
-    {{-- CDN SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // --- 1. SCRIPT JAM REAL-TIME ---
+        // --- 1. JAM REAL-TIME (WIB / Asia/Jakarta) ---
         function updateClock() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
+            // Paksa tampilkan waktu WIB (UTC+7)
+            const wibTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+            const hours   = String(wibTime.getHours()).padStart(2, '0');
+            const minutes = String(wibTime.getMinutes()).padStart(2, '0');
+            const seconds = String(wibTime.getSeconds()).padStart(2, '0');
             document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
         }
         setInterval(updateClock, 1000);
@@ -192,7 +178,6 @@
         // --- 2. LOGIKA KERANJANG (CART) ---
         let cart = [];
 
-        // Format angka ke Rupiah
         const formatRupiah = (number) => {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -201,7 +186,6 @@
             }).format(number);
         };
 
-        // Pemanis Notifikasi Toast (SweetAlert)
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -210,30 +194,17 @@
             timerProgressBar: true,
         });
 
-        // Fungsi Tambah ke Keranjang
         window.tambahKeKeranjang = (id, nama, harga) => {
             const existingItem = cart.find(item => item.id === id);
-
             if (existingItem) {
                 existingItem.qty += 1;
             } else {
-                cart.push({
-                    id,
-                    nama,
-                    harga,
-                    qty: 1
-                });
+                cart.push({ id, nama, harga, qty: 1 });
             }
-
             renderCart();
-
-            Toast.fire({
-                icon: 'success',
-                title: `${nama} ditambahkan!`
-            });
+            Toast.fire({ icon: 'success', title: `${nama} ditambahkan!` });
         };
 
-        // Fungsi Ubah Kuantitas
         window.ubahQty = (index, delta) => {
             cart[index].qty += delta;
             if (cart[index].qty <= 0) {
@@ -242,10 +213,8 @@
             renderCart();
         };
 
-        // Render HTML Keranjang
         const renderCart = () => {
             const container = document.getElementById('cartContainer');
-
             if (cart.length === 0) {
                 container.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-full text-gray-400 opacity-70">
@@ -268,8 +237,7 @@
                             <span class="text-sm font-semibold w-6 text-center">${item.qty}</span>
                             <button onclick="ubahQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center bg-[#C97B2E] text-white rounded shadow-sm hover:bg-orange-600 font-bold">+</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 });
                 html += '</div>';
                 container.innerHTML = html;
@@ -277,35 +245,23 @@
             kalkulasiTotal();
         };
 
-        // Fungsi Kalkulasi Subtotal & Total
         const kalkulasiTotal = () => {
-            let subtotal = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
-            let diskonVal = parseFloat(document.getElementById('inputDiskon').value) || 0;
+            let subtotal   = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+            let diskonVal  = parseFloat(document.getElementById('inputDiskon').value) || 0;
             let tipeDiskon = document.getElementById('tipeDiskon').value;
-            let totalDiskon = 0;
-
-            if (tipeDiskon === 'persen') {
-                totalDiskon = subtotal * (diskonVal / 100);
-            } else {
-                totalDiskon = diskonVal;
-            }
-
-            let totalAkhir = subtotal - totalDiskon;
-            if (totalAkhir < 0) totalAkhir = 0;
+            let totalDiskon = tipeDiskon === 'persen' ? subtotal * (diskonVal / 100) : diskonVal;
+            let totalAkhir  = Math.max(subtotal - totalDiskon, 0);
 
             document.getElementById('subtotalLabel').textContent = formatRupiah(subtotal);
-            document.getElementById('totalLabel').textContent = formatRupiah(totalAkhir);
+            document.getElementById('totalLabel').textContent    = formatRupiah(totalAkhir);
         };
 
         document.getElementById('inputDiskon').addEventListener('input', kalkulasiTotal);
         document.getElementById('tipeDiskon').addEventListener('change', kalkulasiTotal);
 
-        // --- 3. SWEETALERT UNTUK TOMBOL AKSI ---
-
-        // Tombol Hapus Keranjang
+        // --- 3. TOMBOL HAPUS KERANJANG ---
         document.getElementById('btnHapusKeranjang').addEventListener('click', () => {
             if (cart.length === 0) return;
-
             Swal.fire({
                 title: 'Hapus Keranjang?',
                 text: "Semua pesanan yang belum dibayar akan hilang!",
@@ -325,24 +281,22 @@
             });
         });
 
-        // Tombol Bayar (Terhubung dengan Backend)
+        // --- 4. TOMBOL BAYAR ---
         document.getElementById('btnBayar').addEventListener('click', () => {
             if (cart.length === 0) {
                 Swal.fire('Eits!', 'Keranjang masih kosong, pilih menu dulu ya.', 'info');
                 return;
             }
 
-            // Kalkulasi ulang untuk Payload
-            let subtotal = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
-            let diskonVal = parseFloat(document.getElementById('inputDiskon').value) || 0;
-            let tipeDiskon = document.getElementById('tipeDiskon').value;
-            let totalDiskon = (tipeDiskon === 'persen') ? subtotal * (diskonVal / 100) : diskonVal;
-            let totalAkhir = Math.max(subtotal - totalDiskon, 0);
+            let subtotal    = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+            let diskonVal   = parseFloat(document.getElementById('inputDiskon').value) || 0;
+            let tipeDiskon  = document.getElementById('tipeDiskon').value;
+            let totalDiskon = tipeDiskon === 'persen' ? subtotal * (diskonVal / 100) : diskonVal;
+            let totalAkhir  = Math.max(subtotal - totalDiskon, 0);
 
-            // Siapkan data yang akan dikirim ke Controller
             let payload = {
                 _token: '{{ csrf_token() }}',
-                nama_pembeli: 'Pelanggan Umum', // Dummy sementara
+                nama_pembeli: 'Pelanggan Umum',
                 tipe: 'dine_in',
                 metode_bayar: 'tunai',
                 diskon: diskonVal,
@@ -362,35 +316,30 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    // Proses pengiriman data via AJAX Fetch
                     fetch('{{ route('kasir.pesanan.store') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire('Berhasil!', data.message, 'success').then(() => {
-                                    // Reset tampilan jika berhasil
-                                    cart = [];
-                                    document.getElementById('inputDiskon').value = '';
-                                    renderCart();
-                                });
-                            } else {
-                                Swal.fire('Gagal!', data.message || 'Terjadi kesalahan pada input',
-                                    'error');
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire('Error sistem!', 'Cek koneksi internet atau server.', 'error');
-                            console.error('Error Fetch:', error);
-                        });
-
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Berhasil!', data.message, 'success').then(() => {
+                                cart = [];
+                                document.getElementById('inputDiskon').value = '';
+                                renderCart();
+                            });
+                        } else {
+                            Swal.fire('Gagal!', data.message || 'Terjadi kesalahan pada input', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Error sistem!', 'Cek koneksi internet atau server.', 'error');
+                        console.error('Error Fetch:', error);
+                    });
                 }
             });
         });

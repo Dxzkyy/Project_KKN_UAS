@@ -8,23 +8,18 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Menu;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PesananController extends Controller
 {
-    // Method untuk menampilkan halaman POS kasir
     public function index()
     {
-        // Ambil semua data menu dari database
-        $menus = Menu::all(); 
-        
-        // Kirim data $menus ke view
+        $menus = Menu::all();
         return view('kasir.pesanan.index', compact('menus'));
     }
 
-    // Method untuk memproses pembayaran via AJAX
     public function store(Request $request)
     {
-        // 1. Validasi data yang dikirim dari Javascript Frontend
         $request->validate([
             'nama_pembeli' => 'nullable|string|max:255',
             'tipe'         => 'required|in:dine_in,takeaway',
@@ -39,25 +34,21 @@ class PesananController extends Controller
         ]);
 
         try {
-            // Mulai transaksi database agar aman jika ada error di tengah jalan
             DB::beginTransaction();
 
-            // 2. Simpan data utama transaksi ke tabel orders
             $order = Order::create([
-                'kode_order'   => 'ORD' . date('YmdHis') . rand(10, 99), // Contoh: ORD20260606203015xx
+                'kode_order'   => 'ORD' . Carbon::now()->format('YmdHis') . rand(10, 99),
                 'nama_pembeli' => $request->nama_pembeli,
                 'tipe'         => $request->tipe,
                 'metode_bayar' => $request->metode_bayar,
                 'diskon'       => $request->diskon ?? 0,
                 'tipe_diskon'  => $request->tipe_diskon,
                 'total'        => $request->total,
-                'status'       => 'pending', // Menunggu diproses koki di dapur
+                'status'       => 'pending',
                 'kasir_id'     => auth()->id(),
             ]);
 
-            // 3. Simpan detail pesanan & potong stok bahan
             foreach ($request->cart as $item) {
-                // Insert ke tabel order_items
                 OrderItem::create([
                     'order_id' => $order->id,
                     'menu_id'  => $item['id'],
@@ -65,22 +56,16 @@ class PesananController extends Controller
                     'harga'    => $item['harga'],
                 ]);
 
-                // 4. Logika Pemotongan Stok Otomatis
-                // Tarik data menu beserta relasi bahan jadinya
                 $menu = Menu::with('bahanJadi')->find($item['id']);
-                
+
                 if ($menu && $menu->bahanJadi->isNotEmpty()) {
                     foreach ($menu->bahanJadi as $bahan) {
-                        // Kebutuhan bahan per porsi dikali jumlah porsi yang dibeli
                         $totalKebutuhan = $bahan->pivot->kebutuhan * $item['qty'];
-                        
-                        // Kurangi langsung di database tabel bahan_jadis
                         $bahan->decrement('stok', $totalKebutuhan);
                     }
                 }
             }
 
-            // Jika semua proses di atas sukses, simpan permanen
             DB::commit();
 
             return response()->json([
@@ -90,7 +75,6 @@ class PesananController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            // Jika ada error (misal koneksi putus), batalkan semua inputan ke DB
             DB::rollBack();
             return response()->json([
                 'success' => false,
@@ -99,21 +83,31 @@ class PesananController extends Controller
         }
     }
 
-    // Method untuk menampilkan halaman riwayat pesanan
     public function riwayat()
     {
-        // Ambil semua data pesanan dari yang paling baru, beserta detail item dan menunya
         $orders = Order::with('orderItems.menu')->latest()->get();
-        
         return view('kasir.pesanan.riwayat', compact('orders'));
     }
 
-    // Method untuk menampilkan tampilan cetak struk
     public function cetakStruk($id)
     {
-        // Cari data pesanan berdasarkan ID
         $order = Order::with('orderItems.menu')->findOrFail($id);
-        
         return view('kasir.pesanan.struk', compact('order'));
+    }
+
+    // Method untuk membatalkan pesanan (hanya status pending)
+    public function cancel($id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Pastikan hanya pesanan berstatus pending yang bisa dibatalkan
+        if ($order->status !== 'pending') {
+            return redirect()->back()->with('error', 'Pesanan tidak bisa dibatalkan karena sudah diproses dapur.');
+        }
+
+        $order->status = 'dibatalkan';
+        $order->save();
+
+        return redirect()->back()->with('success', "Pesanan {$order->kode_order} berhasil dibatalkan.");
     }
 }
