@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
 // Owner routes
 Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
     Route::get('/dashboard', function () {
-        return view('owner.dashboard');
+        return redirect()->route('owner.laporan.index');
     })->name('dashboard');
 
     Route::resource('menu', MenuController::class);
@@ -59,6 +59,9 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::get('/arsip', [App\Http\Controllers\Owner\ArsipController::class, 'index'])->name('arsip.index');
     Route::get('/arsip/{id}', [App\Http\Controllers\Owner\ArsipController::class, 'show'])->name('arsip.show');
     Route::get('/arsip/{id}/pdf', [App\Http\Controllers\Owner\ArsipController::class, 'cetakPdf'])->name('arsip.pdf');
+
+    // Penjualan
+    Route::get('/penjualan', [App\Http\Controllers\Owner\PenjualanController::class, 'index'])->name('penjualan.index');
 });
 
 //----------------------------------------------------------------------------------------------

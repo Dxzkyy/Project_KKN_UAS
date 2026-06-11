@@ -43,9 +43,9 @@ class AuthenticatedSessionController extends Controller
         session()->flash('login_success', "Selamat datang, $name! Anda berhasil masuk sebagai $roleLabel.");
 
         return match ($role) {
-            'owner' => redirect()->route('owner.dashboard'),
-            'kasir' => redirect()->route('kasir.dashboard'),
-            'chef' => redirect()->route('chef.dashboard'),
+            'owner' => redirect()->route('owner.laporan.index'),
+            'kasir' => redirect()->route('kasir.pesanan.index'),
+            'chef' => redirect()->route('chef.pesanan.index'),
             default => redirect('/'),
         };
     }

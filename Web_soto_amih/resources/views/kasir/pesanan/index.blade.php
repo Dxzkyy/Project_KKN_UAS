@@ -123,18 +123,18 @@
 
                 <div>
                     <p class="text-xs text-gray-500 mb-2">Metode pembayaran:</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">Tunai</button>
-                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">QRIS</button>
-                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] focus:border-[#C97B2E] focus:bg-orange-50 transition">Bank</button>
+                    <div class="grid grid-cols-3 gap-2" id="metodeBayarGroup">
+                        <button onclick="pilihMetode(this, 'tunai')" class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] transition">Tunai</button>
+                        <button onclick="pilihMetode(this, 'qris')" class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] transition">QRIS</button>
+                        <button onclick="pilihMetode(this, 'bank')" class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] transition">Bank</button>
                     </div>
                 </div>
 
                 <div>
                     <p class="text-xs text-gray-500 mb-2">Pilihan:</p>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button class="border border-[#C97B2E] bg-orange-50 rounded-lg py-2 text-xs font-bold text-[#C97B2E] flex justify-center items-center gap-1">Dine in</button>
-                        <button class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] transition flex justify-center items-center gap-1">Takeaway</button>
+                    <div class="grid grid-cols-2 gap-2" id="tipePesananGroup">
+                        <button onclick="pilihTipe(this, 'dine_in')" class="border border-[#C97B2E] bg-orange-50 rounded-lg py-2 text-xs font-bold text-[#C97B2E] flex justify-center items-center gap-1">Dine in</button>
+                        <button onclick="pilihTipe(this, 'takeaway')" class="border border-gray-200 rounded-lg py-2 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] transition flex justify-center items-center gap-1">Takeaway</button>
                     </div>
                 </div>
 
@@ -156,16 +156,107 @@
             </div>
         </div>
     </div>
+
+    {{-- MODAL PEMBAYARAN --}}
+    <div id="modalPembayaran" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+
+            {{-- Header Modal --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="font-bold text-gray-800 text-lg">Pembayaran</h3>
+                <button onclick="tutupModalPembayaran()" class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="px-6 py-5 flex flex-col gap-5">
+
+                {{-- Sub info --}}
+                <p class="text-sm text-gray-500">Silakan pilih metode pembayaran dan masukkan jumlah yang dibayarkan</p>
+
+                {{-- Total yang harus dibayar --}}
+                <div class="bg-orange-50 rounded-xl px-4 py-3 flex justify-between items-center">
+                    <span class="text-sm text-gray-600 font-medium">Total yang harus dibayar:</span>
+                    <span class="font-bold text-[#C97B2E] text-lg" id="modalTotalLabel">Rp 0</span>
+                </div>
+
+                {{-- Metode Pembayaran --}}
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Metode pembayaran</p>
+                    <div class="grid grid-cols-3 gap-2" id="modalMetodeGroup">
+                        <button onclick="pilihModalMetode(this, 'tunai')"
+                            class="flex items-center justify-center gap-1.5 border-2 border-[#C97B2E] bg-orange-50 rounded-xl py-2.5 text-xs font-bold text-[#C97B2E] transition">
+                            💵 Tunai
+                        </button>
+                        <button onclick="pilihModalMetode(this, 'qris')"
+                            class="flex items-center justify-center gap-1.5 border-2 border-gray-200 rounded-xl py-2.5 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] transition">
+                            📱 QRIS
+                        </button>
+                        <button onclick="pilihModalMetode(this, 'bank')"
+                            class="flex items-center justify-center gap-1.5 border-2 border-gray-200 rounded-xl py-2.5 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] transition">
+                            🏦 Bank
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Input Jumlah Bayar --}}
+                <div id="sectionJumlahBayar">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Jumlah bayar</p>
+                    <input type="number" id="inputJumlahBayar" placeholder="Masukkan jumlah..."
+                        class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#C97B2E] transition font-semibold"
+                        oninput="hitungKembalian()">
+
+                    {{-- Shortcut Nominal --}}
+                    <div class="grid grid-cols-4 gap-2 mt-2">
+                        @foreach([50000, 100000, 150000, 200000] as $nominal)
+                        <button onclick="isiNominal({{ $nominal }})"
+                            class="border border-gray-200 rounded-lg py-1.5 text-xs font-semibold text-gray-600 hover:border-[#C97B2E] hover:text-[#C97B2E] hover:bg-orange-50 transition">
+                            Rp {{ number_format($nominal/1000, 0) }}rb
+                        </button>
+                        @endforeach
+                    </div>
+
+                    {{-- Kembalian --}}
+                    <div id="kembalianBox" class="hidden mt-3 bg-green-50 rounded-xl px-4 py-2.5 flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Kembalian:</span>
+                        <span class="font-bold text-green-600 text-base" id="kembalianLabel">Rp 0</span>
+                    </div>
+                    <div id="kurangBayarBox" class="hidden mt-3 bg-red-50 rounded-xl px-4 py-2.5 flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Kurang bayar:</span>
+                        <span class="font-bold text-red-500 text-base" id="kurangBayarLabel">Rp 0</span>
+                    </div>
+                </div>
+
+                {{-- Tombol Aksi --}}
+                <div class="flex gap-3 pt-1">
+                    <button id="btnSimpanCetak"
+                        class="flex-1 bg-[#C97B2E] hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        Simpan & Cetak Resi
+                    </button>
+                    <button id="btnSimpanSaja"
+                        class="flex-1 border-2 border-[#C97B2E] text-[#C97B2E] hover:bg-orange-50 font-bold py-3 rounded-xl transition text-sm">
+                        Simpan tanpa cetak resi
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // --- 1. JAM REAL-TIME (WIB / Asia/Jakarta) ---
+        // --- JAM REAL-TIME ---
         function updateClock() {
             const now = new Date();
-            // Paksa tampilkan waktu WIB (UTC+7)
             const wibTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
             const hours   = String(wibTime.getHours()).padStart(2, '0');
             const minutes = String(wibTime.getMinutes()).padStart(2, '0');
@@ -175,41 +266,61 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. LOGIKA KERANJANG (CART) ---
-        let cart = [];
+        // --- STATE ---
+        let cart          = [];
+        let selectedMetode = 'tunai';
+        let selectedTipe   = 'dine_in';
+        let modalMetode    = 'tunai';
 
-        const formatRupiah = (number) => {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(number);
-        };
+        const formatRupiah = (number) => new Intl.NumberFormat('id-ID', {
+            style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+        }).format(number);
 
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 1500,
+            timer: 2200,
             timerProgressBar: true,
+            background: '#1f2937',
+            color: '#f9fafb',
+            customClass: { timerProgressBar: 'bg-orange-400' },
         });
 
+        // --- PILIH METODE BAYAR (sidebar) ---
+        window.pilihMetode = (el, metode) => {
+            selectedMetode = metode;
+            document.querySelectorAll('#metodeBayarGroup button').forEach(btn => {
+                btn.classList.remove('border-[#C97B2E]', 'text-[#C97B2E]', 'bg-orange-50');
+                btn.classList.add('border-gray-200', 'text-gray-600');
+            });
+            el.classList.add('border-[#C97B2E]', 'text-[#C97B2E]', 'bg-orange-50');
+            el.classList.remove('border-gray-200', 'text-gray-600');
+        };
+
+        // --- PILIH TIPE PESANAN ---
+        window.pilihTipe = (el, tipe) => {
+            selectedTipe = tipe;
+            document.querySelectorAll('#tipePesananGroup button').forEach(btn => {
+                btn.classList.remove('border-[#C97B2E]', 'bg-orange-50', 'text-[#C97B2E]', 'font-bold');
+                btn.classList.add('border-gray-200', 'text-gray-600');
+            });
+            el.classList.add('border-[#C97B2E]', 'bg-orange-50', 'text-[#C97B2E]', 'font-bold');
+            el.classList.remove('border-gray-200', 'text-gray-600');
+        };
+
+        // --- KERANJANG ---
         window.tambahKeKeranjang = (id, nama, harga) => {
-            const existingItem = cart.find(item => item.id === id);
-            if (existingItem) {
-                existingItem.qty += 1;
-            } else {
-                cart.push({ id, nama, harga, qty: 1 });
-            }
+            const existing = cart.find(item => item.id === id);
+            if (existing) { existing.qty += 1; }
+            else { cart.push({ id, nama, harga, qty: 1 }); }
             renderCart();
             Toast.fire({ icon: 'success', title: `${nama} ditambahkan!` });
         };
 
         window.ubahQty = (index, delta) => {
             cart[index].qty += delta;
-            if (cart[index].qty <= 0) {
-                cart.splice(index, 1);
-            }
+            if (cart[index].qty <= 0) cart.splice(index, 1);
             renderCart();
         };
 
@@ -246,100 +357,234 @@
         };
 
         const kalkulasiTotal = () => {
-            let subtotal   = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
-            let diskonVal  = parseFloat(document.getElementById('inputDiskon').value) || 0;
-            let tipeDiskon = document.getElementById('tipeDiskon').value;
-            let totalDiskon = tipeDiskon === 'persen' ? subtotal * (diskonVal / 100) : diskonVal;
-            let totalAkhir  = Math.max(subtotal - totalDiskon, 0);
-
-            document.getElementById('subtotalLabel').textContent = formatRupiah(subtotal);
-            document.getElementById('totalLabel').textContent    = formatRupiah(totalAkhir);
-        };
-
-        document.getElementById('inputDiskon').addEventListener('input', kalkulasiTotal);
-        document.getElementById('tipeDiskon').addEventListener('change', kalkulasiTotal);
-
-        // --- 3. TOMBOL HAPUS KERANJANG ---
-        document.getElementById('btnHapusKeranjang').addEventListener('click', () => {
-            if (cart.length === 0) return;
-            Swal.fire({
-                title: 'Hapus Keranjang?',
-                text: "Semua pesanan yang belum dibayar akan hilang!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#9ca3af',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    cart = [];
-                    document.getElementById('inputDiskon').value = '';
-                    renderCart();
-                    Swal.fire('Terhapus!', 'Keranjang berhasil dikosongkan.', 'success');
-                }
-            });
-        });
-
-        // --- 4. TOMBOL BAYAR ---
-        document.getElementById('btnBayar').addEventListener('click', () => {
-            if (cart.length === 0) {
-                Swal.fire('Eits!', 'Keranjang masih kosong, pilih menu dulu ya.', 'info');
-                return;
-            }
-
             let subtotal    = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
             let diskonVal   = parseFloat(document.getElementById('inputDiskon').value) || 0;
             let tipeDiskon  = document.getElementById('tipeDiskon').value;
             let totalDiskon = tipeDiskon === 'persen' ? subtotal * (diskonVal / 100) : diskonVal;
             let totalAkhir  = Math.max(subtotal - totalDiskon, 0);
 
-            let payload = {
+            document.getElementById('subtotalLabel').textContent = formatRupiah(subtotal);
+            document.getElementById('totalLabel').textContent    = formatRupiah(totalAkhir);
+            return totalAkhir;
+        };
+
+        document.getElementById('inputDiskon').addEventListener('input', kalkulasiTotal);
+        document.getElementById('tipeDiskon').addEventListener('change', kalkulasiTotal);
+
+        // --- MODAL PEMBAYARAN ---
+        window.pilihModalMetode = (el, metode) => {
+            modalMetode = metode;
+
+            document.querySelectorAll('#modalMetodeGroup button').forEach(btn => {
+                btn.classList.remove('border-[#C97B2E]', 'bg-orange-50', 'text-[#C97B2E]');
+                btn.classList.add('border-gray-200', 'text-gray-600');
+            });
+            el.classList.add('border-[#C97B2E]', 'bg-orange-50', 'text-[#C97B2E]');
+            el.classList.remove('border-gray-200', 'text-gray-600');
+
+            // Sembunyikan input jumlah bayar untuk QRIS & Bank
+            const showInput = metode === 'tunai';
+            document.getElementById('sectionJumlahBayar').style.display = showInput ? 'block' : 'none';
+        };
+
+        window.isiNominal = (nominal) => {
+            document.getElementById('inputJumlahBayar').value = nominal;
+            hitungKembalian();
+        };
+
+        window.hitungKembalian = () => {
+            const total    = kalkulasiTotal();
+            const dibayar  = parseFloat(document.getElementById('inputJumlahBayar').value) || 0;
+            const selisih  = dibayar - total;
+
+            document.getElementById('kembalianBox').classList.add('hidden');
+            document.getElementById('kurangBayarBox').classList.add('hidden');
+
+            if (dibayar > 0) {
+                if (selisih >= 0) {
+                    document.getElementById('kembalianLabel').textContent = formatRupiah(selisih);
+                    document.getElementById('kembalianBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('kurangBayarLabel').textContent = formatRupiah(Math.abs(selisih));
+                    document.getElementById('kurangBayarBox').classList.remove('hidden');
+                }
+            }
+        };
+
+        const bukaModalPembayaran = () => {
+            const total = kalkulasiTotal();
+            document.getElementById('modalTotalLabel').textContent = formatRupiah(total);
+            document.getElementById('inputJumlahBayar').value = '';
+            document.getElementById('kembalianBox').classList.add('hidden');
+            document.getElementById('kurangBayarBox').classList.add('hidden');
+
+            // Sync metode dari sidebar ke modal
+            modalMetode = selectedMetode;
+            document.querySelectorAll('#modalMetodeGroup button').forEach((btn, i) => {
+                const metodes = ['tunai', 'qris', 'bank'];
+                if (metodes[i] === selectedMetode) {
+                    btn.classList.add('border-[#C97B2E]', 'bg-orange-50', 'text-[#C97B2E]');
+                    btn.classList.remove('border-gray-200', 'text-gray-600');
+                } else {
+                    btn.classList.remove('border-[#C97B2E]', 'bg-orange-50', 'text-[#C97B2E]');
+                    btn.classList.add('border-gray-200', 'text-gray-600');
+                }
+            });
+
+            // Tampilkan/sembunyikan input jumlah bayar
+            document.getElementById('sectionJumlahBayar').style.display = selectedMetode === 'tunai' ? 'block' : 'none';
+            document.getElementById('modalPembayaran').classList.remove('hidden');
+        };
+
+        window.tutupModalPembayaran = () => {
+            document.getElementById('modalPembayaran').classList.add('hidden');
+        };
+
+        // Tutup modal jika klik backdrop
+        document.getElementById('modalPembayaran').addEventListener('click', function(e) {
+            if (e.target === this) tutupModalPembayaran();
+        });
+
+        // --- PROSES SIMPAN ORDER ---
+        const simpanOrder = (cetakResi) => {
+            const total     = kalkulasiTotal();
+            const diskonVal = parseFloat(document.getElementById('inputDiskon').value) || 0;
+            const tipeDiskon = document.getElementById('tipeDiskon').value;
+
+            // Validasi jumlah bayar untuk tunai
+            if (modalMetode === 'tunai') {
+                const dibayar = parseFloat(document.getElementById('inputJumlahBayar').value) || 0;
+                if (dibayar < total) {
+                    Swal.fire({
+                    title: 'Kurang Bayar!',
+                    text: 'Jumlah yang dibayarkan masih kurang dari total tagihan.',
+                    icon: 'warning',
+                    confirmButtonColor: '#C97B2E',
+                    confirmButtonText: 'Cek Kembali',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        confirmButton: 'rounded-xl px-6',
+                    }
+                });
+                    return;
+                }
+            }
+
+            const payload = {
                 _token: '{{ csrf_token() }}',
                 nama_pembeli: 'Pelanggan Umum',
-                tipe: 'dine_in',
-                metode_bayar: 'tunai',
+                tipe: selectedTipe,
+                metode_bayar: modalMetode,
                 diskon: diskonVal,
                 tipe_diskon: tipeDiskon,
-                total: totalAkhir,
+                total: total,
                 cart: cart
             };
 
-            Swal.fire({
-                title: 'Konfirmasi Pembayaran',
-                text: "Data pesanan akan disimpan ke sistem.",
-                icon: 'question',
-                showCancelButton: true,
+            // Disable tombol saat proses
+            document.getElementById('btnSimpanCetak').disabled = true;
+            document.getElementById('btnSimpanSaja').disabled  = true;
+
+            fetch('{{ route('kasir.pesanan.store') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    tutupModalPembayaran();
+                    cart = [];
+                    document.getElementById('inputDiskon').value = '';
+                    renderCart();
+
+                    if (cetakResi && data.order) {
+                        // Buka struk di tab baru lalu tampilkan notif
+                        window.open('{{ url('kasir/pesanan/struk') }}/' + data.order.id, '_blank');
+                    }
+
+                    Toast.fire({ icon: 'success', title: 'Pesanan berhasil disimpan!' });
+                } else {
+                    Swal.fire({
+                    title: 'Gagal Menyimpan',
+                    text: data.message || 'Terjadi kesalahan, coba lagi.',
+                    icon: 'error',
+                    confirmButtonColor: '#C97B2E',
+                    confirmButtonText: 'Coba Lagi',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        confirmButton: 'rounded-xl px-6',
+                    }
+                });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                title: 'Koneksi Bermasalah',
+                text: 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.',
+                icon: 'error',
                 confirmButtonColor: '#C97B2E',
+                confirmButtonText: 'Oke',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-xl px-6',
+                }
+            });
+            })
+            .finally(() => {
+                document.getElementById('btnSimpanCetak').disabled = false;
+                document.getElementById('btnSimpanSaja').disabled  = false;
+            });
+        };
+
+        document.getElementById('btnSimpanCetak').addEventListener('click', () => simpanOrder(true));
+        document.getElementById('btnSimpanSaja').addEventListener('click',  () => simpanOrder(false));
+
+        // --- TOMBOL BAYAR ---
+        document.getElementById('btnBayar').addEventListener('click', () => {
+            if (cart.length === 0) {
+                Swal.fire({
+                title: 'Keranjang Kosong',
+                text: 'Pilih menu terlebih dahulu sebelum melanjutkan pembayaran.',
+                icon: 'info',
+                confirmButtonColor: '#C97B2E',
+                confirmButtonText: 'Oke, Pilih Menu',
+                background: '#fff',
+                customClass: {
+                    title: 'text-gray-800',
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-xl px-6',
+                }
+            });
+                return;
+            }
+            bukaModalPembayaran();
+        });
+
+        // --- TOMBOL HAPUS KERANJANG ---
+        document.getElementById('btnHapusKeranjang').addEventListener('click', () => {
+            if (cart.length === 0) return;
+            Swal.fire({
+                title: 'Hapus Keranjang?',
+                html: '<p class="text-gray-500 text-sm">Semua item yang sudah dipilih akan <strong>dihapus</strong> dan tidak bisa dikembalikan.</p>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#9ca3af',
-                confirmButtonText: 'Ya, Proses!',
-                cancelButtonText: 'Batal'
+                confirmButtonText: 'Ya, Hapus Semua!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-xl px-5',
+                    cancelButton: 'rounded-xl px-5',
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    fetch('{{ route('kasir.pesanan.store') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Berhasil!', data.message, 'success').then(() => {
-                                cart = [];
-                                document.getElementById('inputDiskon').value = '';
-                                renderCart();
-                            });
-                        } else {
-                            Swal.fire('Gagal!', data.message || 'Terjadi kesalahan pada input', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire('Error sistem!', 'Cek koneksi internet atau server.', 'error');
-                        console.error('Error Fetch:', error);
-                    });
+                    cart = [];
+                    document.getElementById('inputDiskon').value = '';
+                    renderCart();
+                    Toast.fire({ icon: 'success', title: 'Keranjang berhasil dikosongkan' });
                 }
             });
         });
