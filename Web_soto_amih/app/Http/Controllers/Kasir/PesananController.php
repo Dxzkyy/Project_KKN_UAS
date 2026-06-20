@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kasir;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -48,7 +49,10 @@ class PesananController extends Controller
                 'kasir_id'     => auth()->id(),
             ]);
 
+            $namaMenuList = [];
             foreach ($request->cart as $item) {
+                $menu = Menu::with('bahanJadi')->find($item['id']);
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'menu_id'  => $item['id'],
@@ -56,7 +60,7 @@ class PesananController extends Controller
                     'harga'    => $item['harga'],
                 ]);
 
-                $menu = Menu::with('bahanJadi')->find($item['id']);
+                $namaMenuList[] = $item['qty'] . 'x ' . ($menu?->nama_produk ?? '?');
 
                 if ($menu && $menu->bahanJadi->isNotEmpty()) {
                     foreach ($menu->bahanJadi as $bahan) {
@@ -65,6 +69,17 @@ class PesananController extends Controller
                     }
                 }
             }
+
+            // Kirim notifikasi ke semua chef
+            $namaMenu = implode(', ', $namaMenuList);
+            Notification::kirimKeRole('chef', [
+                'judul'        => '🔔 Pesanan Baru Masuk!',
+                'pesan'        => "#{$order->kode_order} — {$namaMenu}",
+                'ikon'         => 'bell',
+                'warna'        => 'orange',
+                'dari_user_id' => auth()->id(),
+                'order_id'     => $order->id,
+            ]);
 
             DB::commit();
 
@@ -95,12 +110,10 @@ class PesananController extends Controller
         return view('kasir.pesanan.struk', compact('order'));
     }
 
-    // Method untuk membatalkan pesanan (hanya status pending)
     public function cancel($id)
     {
         $order = Order::findOrFail($id);
 
-        // Pastikan hanya pesanan berstatus pending yang bisa dibatalkan
         if ($order->status !== 'pending') {
             return redirect()->back()->with('error', 'Pesanan tidak bisa dibatalkan karena sudah diproses dapur.');
         }
