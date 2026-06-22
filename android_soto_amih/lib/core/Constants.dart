@@ -16,15 +16,23 @@ class AppColors {
 }
 
 class AppConfig {
-  // ⚠️ GANTI dengan IP/domain Laravel Anda
-  // Contoh emulator Android: http://10.0.2.2:8000
-  // Contoh device fisik: http://192.168.1.xxx:8000
-  // Contoh production: https://sotoamih.com
-  static const String baseUrl = 'http://10.0.2.2:8000';
-  static const String apiUrl = '$baseUrl/api/v1';
+  // ✅ GANTI sesuai kebutuhan, pilih salah satu:
 
+  // 1️⃣ Chrome / Web browser (flutter run -d chrome)
+  // static const String baseUrl = 'http://127.0.0.1:8000';
+
+  // 2️⃣ Emulator Android Studio
+  // static const String baseUrl = 'http://10.0.2.2:8000';
+
+  // 3️⃣ HP Fisik (ganti IP sesuai hasil ipconfig)
+  // static const String baseUrl = 'http://192.168.1.5:8000';
+
+  // ✅ Aktifkan salah satu di bawah ini:
+  static const String baseUrl = 'http://127.0.0.1:8000'; // ← aktif sekarang
+
+  static const String apiUrl = '$baseUrl/api/v1';
   static const String appName = 'Soto Amih';
-  static const String appTagline = 'Soto Khas Tasikmalaya';
+  static const String appTagline = 'Soto Khas Betawi';
 }
 
 class AppTextStyles {

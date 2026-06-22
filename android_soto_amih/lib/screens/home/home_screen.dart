@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final banners = [
       {
         'emoji': '🍜',
-        'title': 'Soto Khas Tasikmalaya',
+        'title': 'Soto Khas Betawi',
         'sub': 'Mulai dari Rp 20.000',
         'color': AppColors.primary,
       },
