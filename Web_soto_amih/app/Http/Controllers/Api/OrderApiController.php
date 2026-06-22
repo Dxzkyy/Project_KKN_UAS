@@ -54,12 +54,12 @@ class OrderApiController extends Controller
             foreach ($request->items as $item) {
                 $menu = Menu::findOrFail($item['menu_id']);
 
-                if ($menu->stok < $item['jumlah']) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Stok {$menu->nama_produk} tidak cukup (tersisa {$menu->stok})",
-                    ], 422);
-                }
+                // if ($menu->stok < $item['jumlah']) {
+                //     return response()->json([
+                //         'success' => false,
+                //         'message' => "Stok {$menu->nama_produk} tidak cukup (tersisa {$menu->stok})",
+                //     ], 422);
+                // }
 
                 $subtotal = $menu->harga * $item['jumlah'];
                 $total += $subtotal;
@@ -100,8 +100,8 @@ class OrderApiController extends Controller
                     'harga'    => $item['harga'],
                 ]);
 
-                // Kurangi stok
-                $item['menu']->decrement('stok', $item['jumlah']);
+                // // Kurangi stok
+                // $item['menu']->decrement('stok', $item['jumlah']);
             }
 
             DB::commit();

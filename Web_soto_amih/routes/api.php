@@ -1,19 +1,38 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MenuApiController;
+use App\Http\Controllers\Api\OrderApiController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes - Untuk Aplikasi Android Pelanggan (Guest)
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
+| File ini ditambahkan ke: routes/api.php
+| Tidak memerlukan autentikasi karena pelanggan adalah guest
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Menu
+Route::prefix('v1')->group(function () {
+
+    // ── Menu ──────────────────────────────────────────────────────────────
+    Route::get('/menus', [MenuApiController::class, 'index']);          // Semua menu aktif
+    Route::get('/menus/{id}', [MenuApiController::class, 'show']);      // Detail menu
+
+    // ── Order (Pelanggan Guest) ───────────────────────────────────────────
+    Route::post('/orders', [OrderApiController::class, 'store']);                    // Buat pesanan baru
+    Route::get('/orders/{kode_order}', [OrderApiController::class, 'show']);        // Cek status pesanan
+    Route::get('/orders/{kode_order}/status', [OrderApiController::class, 'status']); // Polling status
+
+    Route::get('/image/{filename}', function ($filename) {
+    $path = storage_path('app/public/menus/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path, [
+        'Access-Control-Allow-Origin' => '*',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('filename', '.*');
+
 });
