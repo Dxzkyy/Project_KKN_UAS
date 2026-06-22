@@ -14,27 +14,25 @@ class MenuApiController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Menu::where('stok', '>', 0);
+        $query = Menu::query();
 
-        // Filter kategori
         if ($request->has('kategori') && $request->kategori !== 'Semua') {
             $query->where('kategori', $request->kategori);
         }
 
-        // Search nama produk
         if ($request->has('search') && $request->search !== '') {
             $query->where('nama_produk', 'like', '%' . $request->search . '%');
         }
 
         $menus = $query->get()->map(function ($menu) {
             return [
-                'id'           => $menu->id,
-                'kode_produk'  => $menu->kode_produk,
-                'nama_produk'  => $menu->nama_produk,
-                'kategori'     => $menu->kategori,
-                'harga'        => (float) $menu->harga,
-                'stok'         => $menu->stok,
-                'foto_url'     => $menu->foto ? asset('storage/' . $menu->foto) : null,
+                'id'          => $menu->id,
+                'kode_produk' => $menu->kode_produk,
+                'nama_produk' => $menu->nama_produk,
+                'kategori'    => $menu->kategori,
+                'harga'       => (float) $menu->harga,
+                'stok'        => $menu->stok,
+                'foto_url' => $menu->foto ? url('/api/v1/image/' . $menu->foto) : null,
             ];
         });
 
@@ -65,7 +63,7 @@ class MenuApiController extends Controller
                 'kategori'    => $menu->kategori,
                 'harga'       => (float) $menu->harga,
                 'stok'        => $menu->stok,
-                'foto_url'    => $menu->foto ? asset('storage/' . $menu->foto) : null,
+                'foto_url' => $menu->foto ? url('/api/v1/image/' . $menu->foto) : null,
             ],
         ]);
     }
