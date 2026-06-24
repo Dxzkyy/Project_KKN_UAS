@@ -34,15 +34,15 @@ class OrderApiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_pembeli'  => 'required|string|max:100',
-            'nomor_meja'    => 'nullable|string|max:10',
-            'email'         => 'nullable|email|max:100',
-            'tipe'          => 'required|in:dine_in,takeaway',
-            'metode_bayar'  => 'required|in:tunai,qris,bank',
-            'catatan'       => 'nullable|string|max:255',
-            'items'         => 'required|array|min:1',
+            'nama_pembeli' => 'required|string|max:100',
+            'nomor_meja' => 'nullable|string|max:10',
+            'email' => 'nullable|email|max:100',
+            'tipe' => 'required|in:dine_in,takeaway',
+            'metode_bayar' => 'required|in:tunai,qris,bank',
+            'catatan' => 'nullable|string|max:255',
+            'items' => 'required|array|min:1',
             'items.*.menu_id' => 'required|exists:menus,id',
-            'items.*.jumlah'  => 'required|integer|min:1',
+            'items.*.jumlah' => 'required|integer|min:1',
         ]);
 
         DB::beginTransaction();
@@ -65,9 +65,9 @@ class OrderApiController extends Controller
                 $total += $subtotal;
 
                 $itemsData[] = [
-                    'menu'   => $menu,
+                    'menu' => $menu,
                     'jumlah' => $item['jumlah'],
-                    'harga'  => $menu->harga,
+                    'harga' => $menu->harga,
                 ];
             }
 
@@ -77,17 +77,17 @@ class OrderApiController extends Controller
             // Simpan order
             // kasir_id nullable karena dari Android (guest), bukan kasir internal
             $order = Order::create([
-                'kode_order'   => $kodeOrder,
+                'kode_order' => $kodeOrder,
                 'nama_pembeli' => $request->nama_pembeli,
-                'tipe'         => $request->tipe,
-                'nomor_meja'   => $request->nomor_meja,
+                'tipe' => $request->tipe,
+                'nomor_meja' => $request->nomor_meja,
                 'metode_bayar' => $request->metode_bayar,
-                'diskon'       => 0,
-                'tipe_diskon'  => 'persen',
-                'total'        => $total,
-                'status'       => 'pending',
-                'kasir_id'     => null, // Guest order dari Android
-                'catatan'      => $request->catatan,
+                'diskon' => 0,
+                'tipe_diskon' => 'persen',
+                'total' => $total,
+                'status' => 'pending',
+                'kasir_id' => null, // Guest order dari Android
+                'catatan' => $request->catatan,
                 'email_pembeli' => $request->email,
             ]);
 
@@ -95,9 +95,9 @@ class OrderApiController extends Controller
             foreach ($itemsData as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'menu_id'  => $item['menu']->id,
-                    'jumlah'   => $item['jumlah'],
-                    'harga'    => $item['harga'],
+                    'menu_id' => $item['menu']->id,
+                    'jumlah' => $item['jumlah'],
+                    'harga' => $item['harga'],
                 ]);
 
                 // // Kurangi stok
@@ -118,22 +118,22 @@ class OrderApiController extends Controller
             }
 
             return response()->json([
-                'success'    => true,
-                'message'    => 'Pesanan berhasil dibuat!',
-                'data'       => [
-                    'kode_order'   => $order->kode_order,
+                'success' => true,
+                'message' => 'Pesanan berhasil dibuat!',
+                'data' => [
+                    'kode_order' => $order->kode_order,
                     'nama_pembeli' => $order->nama_pembeli,
-                    'nomor_meja'   => $order->nomor_meja,
-                    'tipe'         => $order->tipe,
+                    'nomor_meja' => $order->nomor_meja,
+                    'tipe' => $order->tipe,
                     'metode_bayar' => $order->metode_bayar,
-                    'total'        => (float) $order->total,
-                    'status'       => $order->status,
-                    'waktu'        => $order->created_at->format('d M Y | H:i'),
-                    'items'        => collect($itemsData)->map(fn($i) => [
+                    'total' => (float) $order->total,
+                    'status' => $order->status,
+                    'waktu' => $order->created_at->format('d M Y | H:i'),
+                    'items' => collect($itemsData)->map(fn($i) => [
                         'nama_produk' => $i['menu']->nama_produk,
-                        'jumlah'      => $i['jumlah'],
-                        'harga'       => (float) $i['harga'],
-                        'subtotal'    => (float) ($i['harga'] * $i['jumlah']),
+                        'jumlah' => $i['jumlah'],
+                        'harga' => (float) $i['harga'],
+                        'subtotal' => (float) ($i['harga'] * $i['jumlah']),
                     ]),
                 ],
             ], 201);
@@ -163,22 +163,22 @@ class OrderApiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => [
-                'kode_order'   => $order->kode_order,
+            'data' => [
+                'kode_order' => $order->kode_order,
                 'nama_pembeli' => $order->nama_pembeli,
-                'nomor_meja'   => $order->nomor_meja,
-                'tipe'         => $order->tipe,
+                'nomor_meja' => $order->nomor_meja,
+                'tipe' => $order->tipe,
                 'metode_bayar' => $order->metode_bayar,
-                'total'        => (float) $order->total,
-                'status'       => $order->status,
-                'catatan'      => $order->catatan,
-                'waktu'        => $order->created_at->format('d M Y | H:i'),
-                'items'        => $order->orderItems->map(fn($item) => [
+                'total' => (float) $order->total,
+                'status' => $order->status,
+                'catatan' => $order->catatan,
+                'waktu' => $order->created_at->format('d M Y | H:i'),
+                'items' => $order->orderItems->map(fn($item) => [
                     'nama_produk' => $item->menu->nama_produk,
-                    'foto_url'    => $item->menu->foto ? asset('storage/' . $item->menu->foto) : null,
-                    'jumlah'      => $item->jumlah,
-                    'harga'       => (float) $item->harga,
-                    'subtotal'    => (float) ($item->harga * $item->jumlah),
+                    'foto_url' => $item->menu->foto ? asset('storage/' . $item->menu->foto) : null,
+                    'jumlah' => $item->jumlah,
+                    'harga' => (float) $item->harga,
+                    'subtotal' => (float) ($item->harga * $item->jumlah),
                 ]),
             ],
         ]);
@@ -197,21 +197,83 @@ class OrderApiController extends Controller
         }
 
         $pesan = match ($order->status) {
-            'pending'    => 'Pesanan Anda sedang menunggu konfirmasi dapur.',
-            'proses'     => 'Pesanan Anda sedang diproses oleh dapur.',
-            'selesai'    => 'Pesanan Anda sudah selesai! Silakan ambil di kasir.',
+            'pending' => 'Pesanan Anda sedang menunggu konfirmasi dapur.',
+            'proses' => 'Pesanan Anda sedang diproses oleh dapur.',
+            'selesai' => 'Pesanan Anda sudah selesai! Silakan ambil di kasir.',
             'dibatalkan' => 'Pesanan Anda telah dibatalkan.',
-            default      => '-',
+            default => '-',
         };
 
         return response()->json([
             'success' => true,
-            'data'    => [
+            'data' => [
                 'kode_order' => $order->kode_order,
-                'status'     => $order->status,
-                'pesan'      => $pesan,
+                'status' => $order->status,
+                'pesan' => $pesan,
                 'updated_at' => $order->updated_at->format('d M Y | H:i'),
             ],
+        ]);
+    }
+
+    public function riwayatByEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $orders = Order::with('orderItems.menu')
+            ->where('email_pembeli', $request->email)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'kode_order' => $order->kode_order,
+                    'nama_pembeli' => $order->nama_pembeli,
+                    'nomor_meja' => $order->nomor_meja,
+                    'tipe' => $order->tipe,
+                    'metode_bayar' => $order->metode_bayar,
+                    'total' => (float) $order->total,
+                    'status' => $order->status,
+                    'waktu' => $order->created_at->format('d M Y | H:i'),
+                    'items' => $order->orderItems->map(fn($item) => [
+                        'nama_produk' => $item->menu?->nama_produk ?? 'Menu dihapus',
+                        'jumlah' => $item->jumlah,
+                        'harga' => (float) $item->harga,
+                        'subtotal' => (float) ($item->harga * $item->jumlah),
+                    ]),
+                ];
+            });
+
+        return response()->json([
+            'success' => $orders->isNotEmpty(),
+            'message' => $orders->isEmpty() ? 'Tidak ada pesanan ditemukan.' : '',
+            'data' => $orders,
+        ]);
+    }
+
+    public function cancelByCustomer(Request $request, $kode_order)
+    {
+        $order = Order::where('kode_order', $kode_order)->first();
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pesanan tidak ditemukan.',
+            ], 404);
+        }
+
+        // Hanya bisa batalkan jika masih pending
+        if ($order->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pesanan tidak bisa dibatalkan karena sudah ' . $order->status . '.',
+            ], 422);
+        }
+
+        $order->status = 'dibatalkan';
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pesanan berhasil dibatalkan.',
         ]);
     }
 }

@@ -38,6 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Notifikasi — bisa diakses semua role yang login
+    Route::get('/notifikasi/fetch', [App\Http\Controllers\NotificationController::class, 'fetch'])->name('notifikasi.fetch');
+    Route::post('/notifikasi/{id}/baca', [App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifikasi.baca');
+    Route::post('/notifikasi/baca-semua', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifikasi.baca_semua');
 });
 
 // Owner routes

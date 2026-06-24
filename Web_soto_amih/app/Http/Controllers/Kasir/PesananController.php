@@ -81,6 +81,17 @@ class PesananController extends Controller
                 'order_id'     => $order->id,
             ]);
 
+            // Kirim notifikasi ke semua owner
+            $kasirName = auth()->user()->name;
+            Notification::kirimKeRole('owner', [
+                'judul'        => '🛒 Pesanan Baru',
+                'pesan'        => "Kasir {$kasirName} membuat #{$order->kode_order} — {$namaMenu} (Rp " . number_format($order->total, 0, ',', '.') . ")",
+                'ikon'         => 'bell',
+                'warna'        => 'orange',
+                'dari_user_id' => auth()->id(),
+                'order_id'     => $order->id,
+            ]);
+
             DB::commit();
 
             return response()->json([
@@ -120,6 +131,17 @@ class PesananController extends Controller
 
         $order->status = 'dibatalkan';
         $order->save();
+
+        // Notif ke owner bahwa ada pesanan dibatalkan
+        $kasirName = auth()->user()->name;
+        Notification::kirimKeRole('owner', [
+            'judul'        => '❌ Pesanan Dibatalkan',
+            'pesan'        => "Kasir {$kasirName} membatalkan pesanan #{$order->kode_order}.",
+            'ikon'         => 'bell',
+            'warna'        => 'red',
+            'dari_user_id' => auth()->id(),
+            'order_id'     => $order->id,
+        ]);
 
         return redirect()->back()->with('success', "Pesanan {$order->kode_order} berhasil dibatalkan.");
     }

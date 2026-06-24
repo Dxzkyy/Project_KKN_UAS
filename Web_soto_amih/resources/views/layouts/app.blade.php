@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Dashboard' }} - Soto Amih</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -12,7 +13,7 @@
     <div class="flex min-h-screen">
 
         {{-- SIDEBAR --}}
-        <aside class="w-52 min-h-screen flex flex-col" style="background-color: #C97B2E;">
+        <aside class="w-52 flex-shrink-0 flex flex-col sticky top-0 h-screen overflow-y-auto" style="background-color: #C97B2E;">
 
             {{-- Logo --}}
             <div class="flex items-center gap-2 px-4 py-5 border-b border-orange-400">
@@ -48,13 +49,9 @@
             <header class="bg-white shadow-sm px-8 py-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold text-gray-800">@yield('page-title')</h1>
                 <div class="flex items-center gap-4">
-                    {{-- Notifikasi --}}
-                    <button class="relative text-gray-500 hover:text-gray-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                    </button>
+                    {{-- Notifikasi Bell --}}
+                    @include('partials.notification_bell')
+
                     {{-- Settings --}}
                     <button class="text-gray-500 hover:text-gray-700">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
