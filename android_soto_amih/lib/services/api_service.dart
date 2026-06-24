@@ -89,4 +89,29 @@ class ApiService {
     }
     return null;
   }
+
+  static Future<List<dynamic>> getRiwayatByEmail(String email) async {
+    final uri = Uri.parse(
+      '${AppConfig.apiUrl}/orders/riwayat',
+    ).replace(queryParameters: {'email': email});
+    final res = await http.get(uri, headers: _headers);
+
+    if (res.statusCode == 200) {
+      final body = jsonDecode(res.body);
+      if (body['success'] == true) {
+        return body['data'] as List<dynamic>;
+      }
+    }
+    return [];
+  }
+
+  static Future<Map<String, dynamic>> cancelOrder(String kodeOrder) async {
+    final uri = Uri.parse('${AppConfig.apiUrl}/orders/$kodeOrder/cancel');
+    final res = await http.patch(uri, headers: _headers);
+    final body = jsonDecode(res.body);
+    return {
+      'success': body['success'] ?? false,
+      'message': body['message'] ?? '',
+    };
+  }
 }

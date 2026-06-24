@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Kasir;
 
 use App\Http\Controllers\Controller;
 use App\Models\LaporanHarian;
+use App\Models\Notification;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -113,6 +114,17 @@ class LaporanController extends Controller
                 'kasir_id'         => auth()->id(),
             ]
         );
+
+        // Kirim notif ke owner
+        $kasirName = auth()->user()->name;
+        Notification::kirimKeRole('owner', [
+            'judul'        => '📋 Laporan Harian Masuk',
+            'pesan'        => "Kasir {$kasirName} mengirim laporan harian. Pendapatan: Rp " . number_format($pendapatanKotor, 0, ',', '.') . " ({$totalPesanan} order).",
+            'ikon'         => 'check',
+            'warna'        => 'green',
+            'dari_user_id' => auth()->id(),
+            'order_id'     => null,
+        ]);
 
         return redirect()->back()->with('success', 'Laporan harian berhasil dikirim ke Pemilik!');
     }

@@ -20,9 +20,11 @@ Route::prefix('v1')->group(function () {
     Route::get('/menus/{id}', [MenuApiController::class, 'show']);      // Detail menu
 
     // ── Order (Pelanggan Guest) ───────────────────────────────────────────
-    Route::post('/orders', [OrderApiController::class, 'store']);                    // Buat pesanan baru
+    Route::post('/orders', [OrderApiController::class, 'store']);  
+    Route::get('/orders/riwayat', [OrderApiController::class, 'riwayatByEmail']);                  // Buat pesanan baru
     Route::get('/orders/{kode_order}', [OrderApiController::class, 'show']);        // Cek status pesanan
     Route::get('/orders/{kode_order}/status', [OrderApiController::class, 'status']); // Polling status
+    Route::patch('/orders/{kode_order}/cancel', [OrderApiController::class, 'cancelByCustomer']);
 
     Route::get('/image/{filename}', function ($filename) {
     $path = storage_path('app/public/menus/' . $filename);
