@@ -8,7 +8,9 @@ import '../menu/menu_screen.dart';
 import '../../../../widgets/menu_card.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback? onNavigateToMenu;
+
+  const HomeScreen({super.key, this.onNavigateToMenu});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -104,10 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: GestureDetector(
-        onTap: () {
-          // Navigate to menu tab (index 1)
-          final nav = context.findAncestorStateOfType<State>();
-        },
+        onTap: () => widget.onNavigateToMenu?.call(),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
@@ -136,19 +135,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBannerCarousel() {
     final banners = [
       {
-        'emoji': '🍜',
+        'image': 'assets/images/banner1.jpg',
         'title': 'Soto Khas Betawi',
         'sub': 'Mulai dari Rp 20.000',
         'color': AppColors.primary,
       },
       {
-        'emoji': '🥣',
+        'image': 'assets/images/banner2.jpg',
         'title': 'Segar & Lezat',
         'sub': 'Resep turun-temurun',
         'color': const Color(0xFFFF7043),
       },
       {
-        'emoji': '🍗',
+        'image': 'assets/images/banner3.jpg',
         'title': 'Lauk Pilihan',
         'sub': 'Aneka pelengkap soto',
         'color': const Color(0xFF66BB6A),
@@ -165,70 +164,85 @@ class _HomeScreenState extends State<HomeScreen> {
           final b = banners[i];
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 6),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  (b['color'] as Color),
-                  (b['color'] as Color).withOpacity(0.7),
-                ],
-              ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -10,
-                  bottom: -10,
-                  child: Text(
-                    b['emoji'] as String,
-                    style: const TextStyle(fontSize: 90),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Background foto full
+                  Image.asset(
+                    b['image'] as String,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        Container(color: b['color'] as Color),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        b['title'] as String,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+
+                  // Dark overlay gradient supaya teks terbaca
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.black.withOpacity(0.6),
+                          Colors.black.withOpacity(0.15),
+                        ],
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        b['sub'] as String,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Pesan Sekarang',
-                          style: TextStyle(
-                            color: b['color'] as Color,
-                            fontSize: 12,
+                    ),
+                  ),
+
+                  // Konten teks + tombol
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          b['title'] as String,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 6),
+                        Text(
+                          b['sub'] as String,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Tombol Pesan Sekarang
+                        GestureDetector(
+                          onTap: () => widget.onNavigateToMenu?.call(),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'Pesan Sekarang',
+                              style: TextStyle(
+                                color: b['color'] as Color,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -297,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text('Rekomendasi', style: AppTextStyles.heading3),
               TextButton(
-                onPressed: () {},
+                onPressed: () => widget.onNavigateToMenu?.call(),
                 child: const Text(
                   'Lihat Semua',
                   style: TextStyle(color: AppColors.primary),

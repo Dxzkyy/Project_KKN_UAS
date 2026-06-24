@@ -57,17 +57,21 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    MenuScreen(),
-    CartScreen(),
-    NotificationScreen(),
-  ];
+  void _navigateTo(int index) {
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final screens = [
+      HomeScreen(onNavigateToMenu: () => _navigateTo(1)),
+      const MenuScreen(),
+      const CartScreen(),
+      const NotificationScreen(),
+    ];
+
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: IndexedStack(index: _currentIndex, children: screens),
       bottomNavigationBar: Consumer<CartProvider>(
         builder: (_, cart, __) => BottomNavigationBar(
           currentIndex: _currentIndex,
